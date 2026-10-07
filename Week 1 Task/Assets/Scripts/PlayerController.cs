@@ -1,6 +1,8 @@
+using Unity.VectorGraphics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Editor;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using Cursor = UnityEngine.Cursor;
 
@@ -13,6 +15,8 @@ public class PlayerController : MonoBehaviour
     private InputAction moveAction;
     private InputAction jumpAction;
     private InputAction lookAction;
+
+    private InputAction quitAction;
 
     [SerializeField] float lookTargetY;
 
@@ -29,7 +33,8 @@ public class PlayerController : MonoBehaviour
         moveAction = InputSystem.actions.FindAction("Move");
         jumpAction =  InputSystem.actions.FindAction("Jump");
         lookAction = InputSystem.actions.FindAction("Look");
-        
+        quitAction = InputSystem.actions.FindAction("Quit");
+
         rb = GetComponent<Rigidbody>();
 
         lookTargetY = 0;
@@ -41,7 +46,8 @@ public class PlayerController : MonoBehaviour
         Vector2 movement = moveAction.ReadValue<Vector2>();
         Vector2 look = lookAction.ReadValue<Vector2>();
         bool jump = jumpAction.IsPressed();
-        
+        bool quit = quitAction.IsPressed();
+
         //move x and z
         this.transform.Translate(movement.x * moveSpeed * Time.deltaTime,0, movement.y * moveSpeed * Time.deltaTime);
         
@@ -62,6 +68,15 @@ public class PlayerController : MonoBehaviour
             {
                 rb.AddForce(Vector3.up * jumpSpeed, ForceMode.Impulse);
             }
+        }
+
+        if (quit)
+        {
+
+            Cursor.lockState = CursorLockMode.None;
+
+            Cursor.visible = true;
+            SceneManager.LoadScene("MainMenu");
         }
     }
 }
